@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- demo -->
+<title>LearnLoop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400..700&display=swap">
+<style>
+/* Course header with progress ring, three module cards with checkable lessons, quiz. */
+
+:root{--bg:#F2F7F6;--surface:#FDFEFE;--fg:#12261F;--muted:#4F6960;--line:#D4E2DE;--accent:#0B7A5A;--accent-fg:#FFFFFF;--warn:#9A5B00;--ok:#0B7A52;--bad:#B3261E;--fd:'Lexend',system-ui,sans-serif;--fb:'Lexend',system-ui,sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1B16;--surface:#172923;--fg:#E6F0EC;--muted:#A9BCB6;--line:#2B4039;--accent:#5BE0B0;--accent-fg:#0E1B16;--warn:#F0B35A;--ok:#4FD6A0;--bad:#FF9A90;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1B16;--surface:#172923;--fg:#E6F0EC;--muted:#A9BCB6;--line:#2B4039;--accent:#5BE0B0;--accent-fg:#0E1B16;--warn:#F0B35A;--ok:#4FD6A0;--bad:#FF9A90;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--fb);font-size:16px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--fd);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.demo{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding-block:10px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line)}
+.demo a{color:var(--accent);font-weight:600;text-decoration:none}
+.brandbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding-block:16px}
+.brand{font-family:var(--fd);font-weight:700;font-size:22px;text-decoration:none}
+.brandbar nav{display:flex;gap:4px;flex-wrap:wrap}
+.brandbar nav a{padding:6px 10px;font-size:14px;color:var(--muted);text-decoration:none;border-radius:8px}
+.brandbar nav a:hover{color:var(--fg)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;font:600 15px var(--fb);text-decoration:none;border:1px solid var(--fg);background:transparent;color:var(--fg);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.small{padding:7px 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+section{padding-block:60px;border-top:1px solid var(--line)}
+.head{display:grid;gap:12px;margin-bottom:32px;max-width:60ch}
+.head h2{font-size:clamp(28px,4vw,42px)}
+.head p{color:var(--muted)}
+form{display:grid;gap:14px}
+label{display:grid;gap:6px;font-size:13px;font-weight:600}
+input,select,textarea{font:inherit;font-weight:400;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.err{color:var(--bad);font-size:14px;min-height:1.2em}
+.ok{padding:16px;border-radius:12px;border:1px solid var(--ok);color:var(--fg);background:var(--bg)}
+.ok b{color:var(--ok)}
+footer{border-top:1px solid var(--line);padding-block:28px 36px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;color:var(--muted);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 14px var(--fb);padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.chip[aria-pressed="true"],.chip[aria-selected="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+@media(max-width:600px){section{padding-block:44px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+
+.top{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding-block:40px 32px}
+.top>*{min-width:0}
+.top h1{font-size:clamp(30px,4.6vw,52px);margin-block:10px}
+.top p{color:var(--muted);max-width:56ch}
+.ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 0deg,var(--line) 0deg)}
+.ring div{width:104px;height:104px;border-radius:50%;background:var(--bg);display:grid;place-items:center;text-align:center}
+.ring strong{font:700 28px var(--fd);line-height:1}
+.ring span{font:500 11px var(--mono);color:var(--muted);letter-spacing:.06em}
+.mods{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.mod{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:10px;align-content:start;min-width:0}
+.mod h3{font-size:19px}
+.mod .eyebrow{font-size:11px}
+.les{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);font-size:15px;cursor:pointer}
+.les input{width:18px;height:18px;margin-top:3px;flex:none;accent-color:var(--accent)}
+.les small{display:block;color:var(--muted);font-size:12.5px}
+.les.done span{text-decoration:line-through;color:var(--muted)}
+.next{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-left:6px}
+.quiz{display:grid;gap:22px;max-width:720px}
+.q{display:grid;gap:8px}
+.q h3{font-size:18px}
+.opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;font-size:15px}
+.opt input{accent-color:var(--accent)}
+.fb{font-size:14px;font-weight:600;min-height:1.2em}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--bad)}
+.result{font:700 22px var(--fd)}
+@media(max-width:900px){.mods{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.mods{grid-template-columns:1fr}.top{grid-template-columns:1fr}}
+
+</style>
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap demo"><span>Demo project by BytePulseDev. All names and data are made up.</span><a href="index.html" target="_blank" rel="noopener">BytePulseDev portfolio ↗</a></div>
+<main class="wrap"><div class="top"><div><p class="eyebrow">Self-paced course</p><h1>LearnLoop: Web Basics</h1><p>Learn how websites work in nine short lessons. Your progress is kept in this browser.</p></div><div class="ring" id="ring" role="img" aria-label="Course progress"><div><div><strong id="pct">0%</strong><span id="pcl">0 / 0 LESSONS</span></div></div></div></div><section id="lessons" style="border-top:0;padding-top:12px"><div class="head"><p class="eyebrow">Curriculum</p><h2>Tick off lessons as you finish them</h2></div><div class="mods" id="mods"></div></section><section id="quiz"><div class="head"><p class="eyebrow">Check yourself</p><h2>Module 1 quiz</h2><p>Three quick questions. Answer all of them, then check.</p></div><form class="quiz" id="qz" novalidate></form></section></main>
+<footer class="wrap"><span>© 2026 LearnLoop · Demo website</span><span>Built by <a href="index.html" target="_blank" rel="noopener">BytePulseDev</a></span></footer>
+
+<script>
+(function(){
+  var M=[{"t": "How the web works", "l": [["What happens when you open a site", "6 min"], ["Browsers, servers and URLs", "8 min"], ["Reading a page's source", "5 min"]]}, {"t": "HTML and CSS", "l": [["Headings, links and images", "9 min"], ["Layout with flexbox", "12 min"], ["Making a page mobile-friendly", "10 min"]]}, {"t": "Adding behaviour", "l": [["Your first JavaScript", "10 min"], ["Responding to clicks", "9 min"], ["Publishing your page", "7 min"]]}],Q=[{"q": "What does a browser request from a server?", "o": ["A web page and its files", "A phone number", "A password"], "a": 0, "e": "Browsers ask servers for HTML, CSS, images and scripts."}, {"q": "Which part of a URL names the site?", "o": ["The path", "The domain", "The query"], "a": 1, "e": "The domain, like example.com, names the site."}, {"q": "Which language describes the structure of a page?", "o": ["CSS", "SQL", "HTML"], "a": 2, "e": "HTML defines headings, text, links and other structure."}],KEY='learnloop-demo-v1',done={};
+  try{done=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){done={};}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(done));}catch(e){}}
+  var total=0;M.forEach(function(m){total+=m.l.length;});
+  function firstOpen(){for(var i=0;i<M.length;i++)for(var j=0;j<M[i].l.length;j++){if(!done[i+'-'+j])return i+'-'+j;}return null;}
+  function draw(){
+    var box=document.getElementById('mods');box.innerHTML='';
+    var nx=firstOpen(),n=0;
+    M.forEach(function(m,i){
+      var c=document.createElement('div');c.className='mod';
+      var e=document.createElement('p');e.className='eyebrow';e.textContent='Module '+(i+1);
+      var t=document.createElement('h3');t.textContent=m.t;c.appendChild(e);c.appendChild(t);
+      m.l.forEach(function(l,j){
+        var k=i+'-'+j;if(done[k])n++;
+        var lb=document.createElement('label');lb.className='les'+(done[k]?' done':'');
+        var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!done[k];
+        cb.addEventListener('change',function(){if(cb.checked)done[k]=true;else delete done[k];save();draw();});
+        var s=document.createElement('span');s.textContent=l[0];
+        var sm=document.createElement('small');sm.textContent=l[1];
+        var w=document.createElement('div');w.appendChild(s);
+        if(k===nx){var tg=document.createElement('span');tg.className='next';tg.textContent='Next up';w.appendChild(tg);}
+        w.appendChild(sm);
+        lb.appendChild(cb);lb.appendChild(w);c.appendChild(lb);
+      });
+      box.appendChild(c);
+    });
+    var p=Math.round(n/total*100);
+    document.getElementById('ring').style.background='conic-gradient(var(--accent) '+(p*3.6)+'deg,var(--line) 0deg)';
+    document.getElementById('pct').textContent=p+'%';
+    document.getElementById('pcl').textContent=n+' / '+total+' LESSONS';
+  }
+  var qz=document.getElementById('qz');
+  Q.forEach(function(q,i){
+    var d=document.createElement('div');d.className='q';
+    var h=document.createElement('h3');h.textContent=(i+1)+'. '+q.q;d.appendChild(h);
+    q.o.forEach(function(o,j){
+      var l=document.createElement('label');l.className='opt';
+      var r=document.createElement('input');r.type='radio';r.name='q'+i;r.value=j;
+      l.appendChild(r);l.appendChild(document.createTextNode(o));d.appendChild(l);
+    });
+    var f=document.createElement('p');f.className='fb';f.id='fb'+i;d.appendChild(f);
+    qz.appendChild(d);
+  });
+  var btn=document.createElement('button');btn.type='submit';btn.className='btn primary';btn.textContent='Check answers';
+  var res=document.createElement('p');res.className='result';res.id='res';
+  qz.appendChild(btn);qz.appendChild(res);
+  qz.addEventListener('submit',function(e){
+    e.preventDefault();var score=0,answered=0;
+    Q.forEach(function(q,i){
+      var sel=qz.querySelector('input[name=q'+i+']:checked'),f=document.getElementById('fb'+i);
+      if(!sel){f.className='fb bad';f.textContent='Choose an answer.';return;}
+      answered++;
+      if(+sel.value===q.a){score++;f.className='fb good';f.textContent='Correct. '+q.e;}
+      else{f.className='fb bad';f.textContent='Not quite. '+q.e;}
+    });
+    res.textContent=answered===Q.length?('Score: '+score+' / '+Q.length):'';
+  });
+  draw();
+})();
+</script>
+</body>
+</html>
